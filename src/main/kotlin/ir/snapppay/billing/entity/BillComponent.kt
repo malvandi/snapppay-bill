@@ -1,0 +1,19 @@
+package ir.snapppay.billing.entity
+
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Inheritance
+import jakarta.persistence.InheritanceType
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+class BillComponent(
+    val username: String = "",
+    val amount: Long = 0,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    val id: Long = 0,
+)
