@@ -1,0 +1,17 @@
+spring.application.name: billing
+
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/snapppay
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+logging:
+  structured:
+    format:
+      console: ecs
