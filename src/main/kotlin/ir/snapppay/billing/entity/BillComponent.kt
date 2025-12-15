@@ -8,9 +8,11 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Inheritance
 import jakarta.persistence.InheritanceType
+import jakarta.persistence.Table
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 
 @Entity
+@Table(name = "bill")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @EntityListeners(AuditingEntityListener::class)
 abstract class BillComponent(
