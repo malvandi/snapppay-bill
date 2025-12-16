@@ -1,25 +1,43 @@
 package ir.snapppay.billing.service
 
-import ir.bamap.blu.exception.NotFoundException
 import ir.bamap.blu.model.filter.And
 import ir.bamap.blu.model.filter.ClassFilter
 import ir.bamap.blu.model.filter.Equal
 import ir.bamap.blu.model.filter.Or
 import ir.snapppay.billing.Util
-import ir.snapppay.billing.config.Entities
+import ir.snapppay.billing.dto.BillingSearch
+import ir.snapppay.billing.dto.PaidItemDto
 import ir.snapppay.billing.dto.PaidRegisterDto
+import ir.snapppay.billing.dto.ParticipantDto
+import ir.snapppay.billing.dto.ParticipantResultSearchModel
 import ir.snapppay.billing.entity.BillComponent
 import ir.snapppay.billing.entity.PaidItem
 import ir.snapppay.billing.entity.Participant
-import ir.snapppay.billing.repository.BilRepository
+import ir.snapppay.billing.mapper.BillMapper
+import ir.snapppay.billing.repository.BillRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional(readOnly = true)
 class BillService(
-    private val repository: BilRepository
+    private val mapper: BillMapper,
+    private val repository: BillRepository
 ) {
+
+    fun search(searchModel: BillingSearch): ParticipantResultSearchModel {
+        val participants = repository.findBy(Participant::class.java, searchModel)
+        val paidIds = participants.records.map { it.paidId }
+
+        val paidItemsDto = repository.findByIds(paidIds)
+            .map { mapper.mapEntity(it) }
+            .filterIsInstance<PaidItemDto>()
+
+        val participantsDto = participants.records.map { mapper.mapEntity(it) }
+            .filterIsInstance<ParticipantDto>()
+
+        return ParticipantResultSearchModel(paidItemsDto, participantsDto, participants.total )
+    }
 
     fun findBillWithParticipants(id: Long): List<BillComponent> {
         val paidFilter = And(ClassFilter(PaidItem::class.java), Equal("id", id))

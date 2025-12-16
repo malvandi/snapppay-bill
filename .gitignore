@@ -34,3 +34,4 @@ build/
 
 ### aider ###
 /.aider-desk
+.aider*
