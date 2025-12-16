@@ -1,10 +1,11 @@
 package ir.snapppay.billing.service
 
+import ir.bamap.blu.exception.NotFoundException
 import ir.bamap.blu.model.filter.And
 import ir.bamap.blu.model.filter.ClassFilter
 import ir.bamap.blu.model.filter.Equal
 import ir.bamap.blu.model.filter.Or
-import ir.snapppay.billing.Util
+import ir.snapppay.billing.config.Entities
 import ir.snapppay.billing.dto.BillingSearch
 import ir.snapppay.billing.dto.PaidItemDto
 import ir.snapppay.billing.dto.PaidRegisterDto
@@ -22,8 +23,23 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class BillService(
     private val mapper: BillMapper,
-    private val repository: BillRepository
+    private val repository: BillRepository,
+    private val userAccountService: UserAccountService
 ) {
+
+    @Transactional
+    fun pay(username: String, billId: Long) {
+        val paidItem = repository.findOrNull(PaidItem::class.java, billId)
+            ?: throw NotFoundException(Entities.PAID, billId)
+
+        val participant = repository.findParticipantForUpdate(billId, username)
+            ?: throw NotFoundException(Entities.PARTICIPANT, "${billId}_$username")
+
+        userAccountService.transferMoney(participant.username, paidItem.username, participant.amount)
+
+        participant.paymentId = "PAID"
+        repository.merge(participant)
+    }
 
     fun search(searchModel: BillingSearch): ParticipantResultSearchModel {
         val participants = repository.findBy(Participant::class.java, searchModel)
@@ -47,9 +63,11 @@ class BillService(
     }
 
     @Transactional
-    fun registerBill(dto: PaidRegisterDto) {
-        val currentUsername = Util.getRandomUsername()
+    fun registerBill(currentUsername: String, dto: PaidRegisterDto): List<BillComponent> {
+        val total = mutableListOf<BillComponent>()
         val paid = PaidItem(dto.title, currentUsername, dto.amount)
+        total.add(paid)
+
         val participantUsers = dto.participants.toMutableSet()
         participantUsers.add(currentUsername)
 
@@ -58,6 +76,9 @@ class BillService(
         participantUsers.forEach {
             val participant = Participant(paid.id, "", it, participantAmount, 0)
             repository.persist(participant)
+            total.add(participant)
         }
+
+        return total
     }
 }

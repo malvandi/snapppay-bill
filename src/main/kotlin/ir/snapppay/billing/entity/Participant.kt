@@ -7,7 +7,7 @@ import jakarta.persistence.Entity
 @DiscriminatorValue("participant")
 class Participant(
     val paidId: Long = 0,
-    val paymentId: String = "",
+    var paymentId: String = "",
     username: String = "",
     amount: Long,
     id: Long = 0

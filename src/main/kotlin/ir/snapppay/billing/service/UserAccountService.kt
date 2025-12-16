@@ -1,7 +1,10 @@
 package ir.snapppay.billing.service
 
+import ir.bamap.blu.exception.NotFoundException
 import ir.bamap.blu.model.filter.In
 import ir.snapppay.billing.Util
+import ir.snapppay.billing.config.Entities
+import ir.snapppay.billing.exception.InsufficientBalance
 import ir.snapppay.billing.entity.UserAccount
 import ir.snapppay.billing.repository.UserAccountRepository
 import org.slf4j.LoggerFactory
@@ -34,5 +37,23 @@ class UserAccountService @Autowired constructor(
         } catch (exception: Exception) {
             logger.error(exception.message, exception)
         }
+    }
+
+    fun transferMoney(fromUsername: String, toUsername: String, amount: Long) {
+        val from = repository.findByUsernameForUpdateOrNull(fromUsername)
+            ?: throw NotFoundException(Entities.USER_ACCOUNT, fromUsername)
+
+        if(from.balance < amount)
+            throw InsufficientBalance(fromUsername)
+
+        val to = repository.findByUsernameForUpdateOrNull(toUsername)
+            ?: throw NotFoundException(Entities.USER_ACCOUNT, fromUsername)
+
+        // TODO(Register Transaction)
+        to.balance += amount
+        from.balance -= amount
+
+        repository.merge(from)
+        repository.merge(to)
     }
 }

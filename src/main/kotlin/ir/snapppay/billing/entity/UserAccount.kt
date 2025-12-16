@@ -9,7 +9,7 @@ class UserAccount(
 
     val username: String = "",
 
-    val amount: Long = 0,
+    var balance: Long = 0,
 
     @Id
     @GeneratedValue
