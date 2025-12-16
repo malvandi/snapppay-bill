@@ -1,0 +1,180 @@
+{
+  "info": {
+    "_postman_id": "dff584ab-ae5f-45b7-8b89-0eef0e719809",
+    "name": "Snapppay",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Register Bill",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "2faaa306-008b-4936-a0d3-5aa6df8b118d",
+                "exec": [
+                  "pm.collectionVariables.set(\"bill\", pm.response.json().paid.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "99ecbbba-63ab-464c-a050-918bc7223c37",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"خرید تنقلات\",\r\n    \"amount\": 10000000,\r\n    \"participants\": [\r\n        \"m.malvandi\",\r\n        \"a.mohammadi\",\r\n        \"m.akbari\",\r\n        \"am.jalili\",\r\n        \"m.ghazanfari\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{snapp}}/{{username}}/bill",
+              "host": [
+                "{{snapp}}"
+              ],
+              "path": [
+                "{{username}}",
+                "bill"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Pay Bill",
+          "id": "7985c92c-707c-4937-839a-46269124804d",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"page\": 0,\r\n    \"limit\": 10\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{snapp}}/{{username}}/bill/{{bill}}/pay",
+              "host": [
+                "{{snapp}}"
+              ],
+              "path": [
+                "{{username}}",
+                "bill",
+                "{{bill}}",
+                "pay"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Billing Search",
+          "id": "6c451b38-ceb6-4e1c-9cb9-cdd95ed5e0b5",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"page\": 0,\r\n    \"limit\": 10\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{snapp}}/{{username}}/billings",
+              "host": [
+                "{{snapp}}"
+              ],
+              "path": [
+                "{{username}}",
+                "billings"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "13285408-fa58-40af-9573-813d54f392d7"
+    },
+    {
+      "name": "Bill Details",
+      "id": "b2e74e6f-e8cd-436e-a815-daa7c640cfd3",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{snapp}}/bill/{{bill}}",
+          "host": [
+            "{{snapp}}"
+          ],
+          "path": [
+            "bill",
+            "{{bill}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "4cf18525-801f-47a6-8985-4456f2cefbb7",
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "820ee566-9785-4086-8c63-38b18d8782ed",
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "e482cbc9-0bf0-40fe-86e5-0d33cb2eedde",
+      "key": "snapp",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "id": "5b779eb9-58f6-4990-84c4-0a9ca290aee9",
+      "key": "username",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "id": "b9aaea3a-184e-4d93-bf8f-0b85f9589e0d",
+      "key": "bill",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}
