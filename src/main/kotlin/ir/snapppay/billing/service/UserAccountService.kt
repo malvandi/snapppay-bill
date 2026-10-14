@@ -22,7 +22,7 @@ class UserAccountService @Autowired constructor(
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     @Transactional
-    override fun run(vararg args: String?) {
+    override fun run(vararg args: String) {
         try {
             val usernames = Util.usernames.toMutableSet()
             val accounts = repository.findBy(In("username", usernames))
